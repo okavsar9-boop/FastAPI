@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Path
 
 app = FastAPI()
 
@@ -26,7 +26,7 @@ def home():
     return {"Data" : "Welcome to the page"}
 
 @app.get("/store/{item_id}")
-def store(item_id : int):
+def store(item_id : int = Path( description= "The ID of the item you want to get ",gt= 0, lt = 3)):
     return biedronka[item_id]
 
 
