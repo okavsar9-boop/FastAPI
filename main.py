@@ -29,4 +29,12 @@ def home():
 def store(item_id : int = Path( description= "The ID of the item you want to get ",gt= 0, lt = 3)):
     return biedronka[item_id]
 
+@app.get("/get-by-name")
+def store(name : str):
+    for item_id in biedronka:
+        if biedronka[item_id]['product'] == name:
+            return biedronka[item_id]
+    return {'Data' : 'Not Found'}
+
+
 
