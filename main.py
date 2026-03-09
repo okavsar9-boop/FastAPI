@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path
+from fastapi import FastAPI, Path , Query
 from typing import Optional
 from pydantic import BaseModel
 
@@ -25,7 +25,7 @@ def home():
     return {"Data" : "Welcome to the page"}
 
 @app.get("/store/{item_id}")
-def store(item_id : int = Path( description= "The ID of the item you want to get ",gt= 0)):
+def store(item_id : int = Path( description= "The ID of the item you want to get ")):
     return biedronka[item_id]
 
 @app.get("/get-by-name/{item_id}")
@@ -44,12 +44,30 @@ def create_item(item_id : int, item : Item):
     biedronka[item_id] = item
     return biedronka[item_id]
 
-@app.put("/update-item/{item_id}"):
+@app.put("/update-item/{item_id}")
 def update_item(item_id:int, item :UpdateItem):
     if item_id not in biedronka:
         return {"Error" : "Item does not exist in Biedronka"}
-    biedronka[item_id].update(item)
+
+    if item.product != None:
+        biedronka[item_id].product = item.product
+
+    if item.price != None:
+        biedronka[item_id].price = item.price
+
+    if item.brand != None:
+        biedronka[item_id].brand = item.brand
+
+    if item.quantity != None:
+        biedronka[item_id].quantity = item.quantity
+        
     return biedronka[item_id]
 
+@app.delete("/delete-item")
+def delete_item (item_id : int, int = Query(..., description= "The ID of the item to DELETE" , gt=0)):
+    if item_id not in biedronka:
+        return {"Errro" : "The ID does not exist"}
+    del biedronka[item_id]
+    return {"Success" : "Item deleted !"}
 
 
