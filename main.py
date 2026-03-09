@@ -8,25 +8,16 @@ class Item(BaseModel):
     brand: Optional[str] = None
     quantity: Optional[int] = None
 
+class UpdateItem(BaseModel):
+    product: Optional[str] = None
+    price: Optional[float] = None
+    brand: Optional[str] = None
+    quantity: Optional[int] = None
+
 app = FastAPI()
 
 
-biedronka = {
-    1 : 
-    { 
-        'product' : 'coke',
-        'price' : 4.99,
-        'brand' : 'polski',
-        'quantity' : 6
-    },
-    2 :
-    {
-        'product' : 'chocolate',
-        'price' : 2.99,
-        'brand' : 'milka',
-        'quantity' : 3
-    }
-}
+biedronka = {}
 
 
 @app.get("/")
@@ -48,9 +39,16 @@ def get_by_name(item_id : int, name : Optional[str]= None ):
 @app.post("/create-item/{item_id}")
 def create_item(item_id : int, item : Item):
     if item_id in biedronka:
-        return {"Error" : "Item is already exist in Biedronka"}
+        return {"Error" : "Item already exists in Biedronka"}
 
-    biedronka[item_id] = {'product': item.product, 'price' : item.price, 'brand':item.brand, 'quantity': item.quantity}
+    biedronka[item_id] = item
+    return biedronka[item_id]
+
+@app.put("/update-item/{item_id}"):
+def update_item(item_id:int, item :UpdateItem):
+    if item_id not in biedronka:
+        return {"Error" : "Item does not exist in Biedronka"}
+    biedronka[item_id].update(item)
     return biedronka[item_id]
 
 
