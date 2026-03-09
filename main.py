@@ -26,6 +26,8 @@ def home():
 
 @app.get("/store/{item_id}")
 def store(item_id : int = Path( description= "The ID of the item you want to get ")):
+    if not biedronka[item]:
+        return {"Error": "Item not found"}
     return biedronka[item_id]
 
 @app.get("/get-by-name/{item_id}")
@@ -49,25 +51,25 @@ def update_item(item_id:int, item :UpdateItem):
     if item_id not in biedronka:
         return {"Error" : "Item does not exist in Biedronka"}
 
-    if item.product != None:
+    if item.product is not None:
         biedronka[item_id].product = item.product
 
-    if item.price != None:
+    if item.price is not None:
         biedronka[item_id].price = item.price
 
-    if item.brand != None:
+    if item.brand is not None:
         biedronka[item_id].brand = item.brand
 
-    if item.quantity != None:
+    if item.quantity is not None:
         biedronka[item_id].quantity = item.quantity
         
     return biedronka[item_id]
 
 @app.delete("/delete-item")
-def delete_item (item_id : int, int = Query(..., description= "The ID of the item to DELETE" , gt=0)):
+def delete_item (item_id : int = Query(..., description= "The ID of the item to DELETE" , gt=0)):
     if item_id not in biedronka:
-        return {"Errro" : "The ID does not exist"}
-    del biedronka[item_id]
-    return {"Success" : "Item deleted !"}
+        return {"Error" : "The ID does not exist"}
+    deleted_item = biedronka.pop(item_id)
+    return {"Success" : "Item deleted !" , "Deleted_Item " : deleted_item}
 
 
